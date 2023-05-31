@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-. */
-/* -.-.-.-.-.-. $CHADGPT ALPHA STAKING POOL -.-.-.-.-.-. */
+/* -.-.-.-. $CHADGPT ALPHA STAKING POOL v0.1 -.-.-.-.-. */
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-. */
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
