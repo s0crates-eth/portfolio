@@ -15,7 +15,7 @@ contract alphaStaking is ERC20, Ownable{
     IERC20 public tokenAddr; // 0x6632d8c49234a6783b45cdc5fc9355a47124e187 (ChadGPT)
 
     uint256 public timerDuration; // 248400 (69 hours)
-    uint256 public rwdRate; // 42 (4.2% of pool)
+    uint256 public rwdRate; // 420 (4.2% of pool)
     uint256 public stakedPoolSupply;
     bool public stakingOpen;
 
@@ -43,7 +43,7 @@ contract alphaStaking is ERC20, Ownable{
         require(isStaked[_user], "This address has not staked");
         uint256 totalTokenBalance = IERC20(tokenAddr).balanceOf(address(this));
         uint256 rwdPoolSupply = totalTokenBalance - stakedPoolSupply;
-        uint256 rwdPoolAftrRate = rwdPoolSupply * rwdRate / 1000;
+        uint256 rwdPoolAftrRate = rwdPoolSupply * rwdRate / 10000;
         uint256 userBalance = stakedPoolBalances[_user];
         uint256 userRewardsAmount =  rwdPoolAftrRate * userBalance / stakedPoolSupply;
         return userRewardsAmount;
