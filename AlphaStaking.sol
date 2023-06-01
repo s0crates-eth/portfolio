@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-. */
-/* -.-.-.-. $CHADGPT ALPHA STAKING POOL v0.1 -.-.-.-.-. */
+/* -.-.-.-.-.-. $CHADGPT ALPHA STAKING POOL .-.-.-.-.-. */
 /* -.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-. */
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -59,20 +59,40 @@ contract alphaStaking is ERC20, Ownable{
         require(stakingOpen == true, "Staking pool is closed");
         require(_amount > 0, "Deposit must be > 0");
         
-        uint before = IERC20(tokenAddr).balanceOf(msg.sender);
+        uint before = IERC20(tokenAddr).balanceOf(address(this));
         // all users must APPROVE staking contract to use erc20 before v-this-v can work
         bool success = IERC20(tokenAddr).transferFrom(msg.sender, address(this), _amount);
         require(success == true, "transfer failed!");
-        uint totalStaked = before - (IERC20(tokenAddr).balanceOf(msg.sender));
+        uint totalStaked = (IERC20(tokenAddr).balanceOf(address(this))) - before;
         
         isStaked[msg.sender] = true;
         withdrawTimer[msg.sender] = block.timestamp;
         stakedPoolBalances[msg.sender] += totalStaked;
         stakedPoolSupply += totalStaked;
 
-        _mint(msg.sender, totalStaked); // aChad
+        _mint(msg.sender, totalStaked); //aChad
 
         emit DepositEmit(msg.sender, totalStaked, stakedPoolBalances[msg.sender]);
+    }
+
+    function withdrawRewards() public{
+        require(stakingOpen == true, "Staking pool is closed");
+        require(isStaked[msg.sender], "This address has not staked");
+        
+        uint256 timeElapsed = calculateTime(msg.sender);
+        require(timeElapsed >= timerDuration, 'Minimum required staking time not met');
+
+        uint256 userBalance = stakedPoolBalances[msg.sender];
+        require(userBalance > 0, 'insufficient balance');
+
+        uint256 userReward = calculateRewards(msg.sender);
+        require(userReward > 0, 'insufficient reward');
+        
+        withdrawTimer[msg.sender] = block.timestamp;
+        bool success = IERC20(tokenAddr).transfer(msg.sender, userReward);
+        require(success == true, "transfer failed!");
+
+        emit RewardsEmit(msg.sender, userBalance, userReward);
     }
 
     function withdrawAll() public{
@@ -95,26 +115,6 @@ contract alphaStaking is ERC20, Ownable{
         _burn(msg.sender, userBalance); //aChad
 
         emit WithdrawEmit(msg.sender, userBalance);
-    }
-
-    function withdrawRewards() public{
-        require(stakingOpen == true, "Staking pool is closed");
-        require(isStaked[msg.sender], "This address has not staked");
-        
-        uint256 timeElapsed = calculateTime(msg.sender);
-        require(timeElapsed >= timerDuration, 'Minimum required staking time not met');
-
-        uint256 userBalance = stakedPoolBalances[msg.sender];
-        require(userBalance > 0, 'insufficient balance');
-
-        uint256 userReward = calculateRewards(msg.sender);
-        require(userReward > 0, 'insufficient reward');
-        
-        withdrawTimer[msg.sender] = block.timestamp;
-        bool success = IERC20(tokenAddr).transfer(msg.sender, userReward);
-        require(success == true, "transfer failed!");
-
-        emit RewardsEmit(msg.sender, userBalance, userReward);
     }
 
     //onlyOwners
