@@ -63,7 +63,7 @@ contract alphaStaking is ERC20, Ownable{
         // all users must APPROVE staking contract to use erc20 before v-this-v can work
         bool success = IERC20(tokenAddr).transferFrom(msg.sender, address(this), _amount);
         require(success == true, "transfer failed!");
-        uint totalStaked = (IERC20(tokenAddr).balanceOf(address(this))) - before;
+        uint totalStaked = IERC20(tokenAddr).balanceOf(address(this)) - before;
         
         isStaked[msg.sender] = true;
         withdrawTimer[msg.sender] = block.timestamp;
