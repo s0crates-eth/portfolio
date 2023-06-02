@@ -123,7 +123,7 @@ contract alphaStaking is ERC20, Ownable{
     }
 
     function setRate(uint256 _rwdRate) external onlyOwner {
-        require(_rwdRate > 0 && _rwdRate < 1000, "Rate must be > 0 and < 1000");
+        require(_rwdRate > 0 && _rwdRate < 10000, "Rate must be > 0 and < 10000");
         rwdRate = _rwdRate;
     }
 
